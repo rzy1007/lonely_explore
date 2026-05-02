@@ -1,3 +1,4 @@
+import './styles/main.css';
 import { store } from './store.js';
 import { initScene, getScene, getCamera, getRenderer } from './scene/setup.js';
 import { createStarfield } from './scene/starfield.js';
