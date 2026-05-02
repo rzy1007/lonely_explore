@@ -1,4 +1,3 @@
-import './styles/main.css';
 import { store } from './store.js';
 import { initScene, getScene, getCamera, getRenderer } from './scene/setup.js';
 import { createStarfield } from './scene/starfield.js';
@@ -11,45 +10,20 @@ import { initScaleBar } from './ui/scalebar.js';
 import { initImmersive, updateImmersive } from './ui/immersive.js';
 import { initSplash } from './splash.js';
 
-// Start splash animation
-initSplash();
-
-// When splash is done, init the 3D scene
-store.on('splashDone', () => {
-  initAll();
-});
-
 function initAll() {
-  // Scene
   const { scene } = initScene();
 
-  // Background stars
   createStarfield(scene);
-
-  // Celestial bodies
   createAllBodies(scene);
-
-  // Orbits for solar system
   createOrbits(scene);
-
-  // Controls
   initControls();
-
-  // UI
   initSidebar();
   initInfoPanel();
   initScaleBar();
   initImmersive();
 
-  // Listen for body selection
-  store.on('bodySelected', (id) => {
-    flyToBody(id);
-  });
-
-  // Listen for scale changes
-  store.on('scaleChanged', (scale) => {
-    flyToScale(scale);
-  });
+  store.on('bodySelected', (id) => flyToBody(id));
+  store.on('scaleChanged', (scale) => flyToScale(scale));
 
   // Render loop
   const clock = new THREE.Clock();
@@ -57,31 +31,48 @@ function initAll() {
   const camera = getCamera();
 
   function render() {
-    if (store.isSplashDone) {
-      const delta = clock.getDelta();
-
-      updateCameraAnimation();
-      updateImmersive(delta);
-
-      // Slowly rotate starfield
-      const stars = scene.getObjectByName('starfield');
-      if (stars) {
-        stars.rotation.y += 0.0001;
-        stars.rotation.x += 0.00005;
-      }
-
-      // Update black hole glows
-      scene.traverse((obj) => {
-        if (obj.userData && obj.userData.glowMaterial) {
-          obj.userData.glowMaterial.uniforms.uTime.value += delta;
-        }
-      });
-
-      renderer.render(scene, camera);
+    if (!store.isSplashDone) {
+      requestAnimationFrame(render);
+      return;
     }
 
+    const delta = clock.getDelta();
+    updateCameraAnimation();
+    updateImmersive(delta);
+
+    const stars = scene.getObjectByName('starfield');
+    if (stars) {
+      stars.rotation.y += 0.0001;
+      stars.rotation.x += 0.00005;
+    }
+
+    scene.traverse((obj) => {
+      if (obj.userData?.glowMaterial) {
+        obj.userData.glowMaterial.uniforms.uTime.value += delta;
+      }
+    });
+
+    renderer.render(scene, camera);
     requestAnimationFrame(render);
   }
 
   render();
+}
+
+// Start splash, then init scene
+store.on('splashDone', initAll);
+
+try {
+  initSplash();
+} catch (e) {
+  console.error('Splash failed:', e);
+  // Skip splash and go directly to scene
+  const c = document.getElementById('splash-canvas');
+  const o = document.getElementById('splash-overlay');
+  if (c) c.style.display = 'none';
+  if (o) o.style.display = 'none';
+  store.isSplashDone = true;
+  store.emit('splashDone');
+  const container = document.getElementById('three-container');
+  if (container) container.classList.add('visible');
 }
