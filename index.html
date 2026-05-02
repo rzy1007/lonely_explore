@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>孤独探索 - 天体宇宙</title>
+  <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Splash -->
+    <canvas id="splash-canvas"></canvas>
+    <div id="splash-overlay">
+      <h1 id="splash-title">孤独探索</h1>
+      <p id="splash-subtitle">点击任意位置开始探索宇宙</p>
+    </div>
+
+    <!-- Siderbar Toggle -->
+    <button id="sidebar-toggle" title="天体目录">☰</button>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <input type="text" id="search-box" placeholder="搜索天体 (中文/英文)..." />
+      <div id="celestial-tree"></div>
+    </div>
+
+    <!-- Info Panel -->
+    <div id="info-panel">
+      <button id="btn-close-info" title="关闭">✕</button>
+      <h2 class="body-name"></h2>
+      <div class="en-name"></div>
+      <div class="info-row"><span class="info-label">类型</span><span class="info-type"></span></div>
+      <div class="info-rows"></div>
+      <p class="info-desc"></p>
+      <button id="btn-immersive">沉浸观赏</button>
+    </div>
+
+    <!-- Scale Bar -->
+    <div id="scale-bar"></div>
+
+    <!-- Immersive Overlay -->
+    <div id="immersive-overlay">
+      <button id="btn-exit-immersive">✕ 退出沉浸模式</button>
+      <div id="immersive-hint"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

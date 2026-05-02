@@ -1,0 +1,17 @@
+{
+  "name": "lonely_explore",
+  "version": "1.0.0",
+  "description": "天体宇宙交互式3D可视化",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}
